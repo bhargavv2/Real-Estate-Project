@@ -1,0 +1,7 @@
+package realestate.dao;
+import realestate.util.*;import java.sql.*;
+public class InterestDAO {
+ public boolean express(long buyer,long property)throws SQLException{try(Connection c=DatabaseConnection.getConnection();PreparedStatement p=c.prepareStatement("INSERT INTO interests(property_id,buyer_id,status) VALUES(?,?,'NEW')")){p.setLong(1,property);p.setLong(2,buyer);return p.executeUpdate()==1;}catch(SQLException e){if(e.getErrorCode()==2601||e.getErrorCode()==2627)return false;throw e;}}
+ public void listForSeller(long seller)throws SQLException{String q="SELECT i.interest_id,i.property_id,i.buyer_id,u.name,u.email,i.interest_date,i.status FROM interests i JOIN properties p ON p.property_id=i.property_id JOIN users u ON u.user_id=i.buyer_id WHERE p.seller_id=? ORDER BY i.interest_date DESC";try(Connection c=DatabaseConnection.getConnection();PreparedStatement p=c.prepareStatement(q)){p.setLong(1,seller);try(ResultSet r=p.executeQuery()){while(r.next())System.out.printf("Interest %d | property %d | buyer %s (%s) | %s | %s%n",r.getLong(1),r.getLong(2),r.getString(4),r.getString(5),r.getTimestamp(6),r.getString(7));}}}
+ public void listAll()throws SQLException{try(Connection c=DatabaseConnection.getConnection();Statement s=c.createStatement();ResultSet r=s.executeQuery("SELECT interest_id,property_id,buyer_id,interest_date,status FROM interests ORDER BY interest_date DESC")){while(r.next())System.out.printf("%d | property %d | buyer %d | %s | %s%n",r.getLong(1),r.getLong(2),r.getLong(3),r.getTimestamp(4),r.getString(5));}}
+}

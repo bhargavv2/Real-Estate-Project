@@ -1,0 +1,3 @@
+package realestate.service;
+import realestate.dao.UserDAO;import realestate.model.User;import java.sql.SQLException;
+public class AuthenticationService {private final UserDAO dao;public AuthenticationService(UserDAO d){dao=d;}public long register(String n,String e,String phone,String role,char[] pw)throws SQLException{if(n.isBlank()||!e.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")||pw.length<8||!role.matches("BUYER|SELLER"))throw new IllegalArgumentException("Enter a name, valid email, password of at least 8 characters, and BUYER or SELLER role.");return dao.register(n.trim(),e.trim(),phone.trim(),role,pw);}public User login(String e,char[] p)throws SQLException{return dao.login(e.trim(),p);}}
